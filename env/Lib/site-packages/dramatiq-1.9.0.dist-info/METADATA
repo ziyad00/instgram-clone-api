@@ -1,0 +1,133 @@
+Metadata-Version: 2.1
+Name: dramatiq
+Version: 1.9.0
+Summary: Background Processing for Python 3.
+Home-page: UNKNOWN
+Author: Bogdan Popa
+Author-email: bogdan@cleartype.io
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Topic :: System :: Distributed Computing
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)
+Requires-Python: >=3.5
+Description-Content-Type: text/markdown
+Requires-Dist: prometheus-client (>=0.2)
+Provides-Extra: all
+Requires-Dist: watchdog-gevent (==0.1) ; extra == 'all'
+Requires-Dist: watchdog (<0.9,>=0.8) ; extra == 'all'
+Requires-Dist: pylibmc (<2.0,>=1.5) ; extra == 'all'
+Requires-Dist: pika (<2.0,>=1.0) ; extra == 'all'
+Requires-Dist: redis (<4.0,>=2.0) ; extra == 'all'
+Provides-Extra: dev
+Requires-Dist: watchdog-gevent (==0.1) ; extra == 'dev'
+Requires-Dist: watchdog (<0.9,>=0.8) ; extra == 'dev'
+Requires-Dist: pylibmc (<2.0,>=1.5) ; extra == 'dev'
+Requires-Dist: pika (<2.0,>=1.0) ; extra == 'dev'
+Requires-Dist: redis (<4.0,>=2.0) ; extra == 'dev'
+Requires-Dist: alabaster ; extra == 'dev'
+Requires-Dist: sphinx (<1.8) ; extra == 'dev'
+Requires-Dist: sphinxcontrib-napoleon ; extra == 'dev'
+Requires-Dist: flake8 ; extra == 'dev'
+Requires-Dist: flake8-bugbear ; extra == 'dev'
+Requires-Dist: flake8-quotes ; extra == 'dev'
+Requires-Dist: isort ; extra == 'dev'
+Requires-Dist: bumpversion ; extra == 'dev'
+Requires-Dist: hiredis ; extra == 'dev'
+Requires-Dist: twine ; extra == 'dev'
+Requires-Dist: wheel ; extra == 'dev'
+Requires-Dist: pytest (<4) ; extra == 'dev'
+Requires-Dist: pytest-benchmark[histogram] ; extra == 'dev'
+Requires-Dist: pytest-cov ; extra == 'dev'
+Requires-Dist: tox ; extra == 'dev'
+Provides-Extra: memcached
+Requires-Dist: pylibmc (<2.0,>=1.5) ; extra == 'memcached'
+Provides-Extra: rabbitmq
+Requires-Dist: pika (<2.0,>=1.0) ; extra == 'rabbitmq'
+Provides-Extra: redis
+Requires-Dist: redis (<4.0,>=2.0) ; extra == 'redis'
+Provides-Extra: watch
+Requires-Dist: watchdog (<0.9,>=0.8) ; extra == 'watch'
+Requires-Dist: watchdog-gevent (==0.1) ; extra == 'watch'
+
+<img src="https://dramatiq.io/_static/logo.png" align="right" width="131" />
+
+# dramatiq
+
+[![Build Status](https://github.com/Bogdanp/dramatiq/workflows/CI/badge.svg)](https://github.com/Bogdanp/dramatiq/actions?query=workflow%3A%22CI%22)
+[![PyPI version](https://badge.fury.io/py/dramatiq.svg)](https://badge.fury.io/py/dramatiq)
+[![Documentation](https://img.shields.io/badge/doc-latest-brightgreen.svg)](http://dramatiq.io)
+[![Discourse](https://img.shields.io/badge/discuss-online-orange.svg)](https://reddit.com/r/dramatiq)
+
+*A fast and reliable distributed task processing library for Python 3.*
+
+<hr/>
+
+**Changelog**: https://dramatiq.io/changelog.html <br/>
+**Community**: https://reddit.com/r/dramatiq <br/>
+**Documentation**: https://dramatiq.io <br/>
+
+<hr/>
+
+## Installation
+
+If you want to use it with [RabbitMQ]
+
+    pip install 'dramatiq[rabbitmq, watch]'
+
+or if you want to use it with [Redis]
+
+    pip install 'dramatiq[redis, watch]'
+
+
+## Quickstart
+
+Make sure you've got [RabbitMQ] running, then create a new file called
+`example.py`:
+
+``` python
+import dramatiq
+import requests
+import sys
+
+
+@dramatiq.actor
+def count_words(url):
+    response = requests.get(url)
+    count = len(response.text.split(" "))
+    print(f"There are {count} words at {url!r}.")
+
+
+if __name__ == "__main__":
+    count_words.send(sys.argv[1])
+```
+
+In one terminal, run your workers:
+
+    dramatiq example
+
+In another, start enqueueing messages:
+
+    python example.py http://example.com
+    python example.py https://github.com
+    python example.py https://news.ycombinator.com
+
+Check out the [user guide] to learn more!
+
+
+## License
+
+dramatiq is licensed under the LGPL.  Please see [COPYING] and
+[COPYING.LESSER] for licensing details.
+
+
+[COPYING.LESSER]: https://github.com/Bogdanp/dramatiq/blob/master/COPYING.LESSER
+[COPYING]: https://github.com/Bogdanp/dramatiq/blob/master/COPYING
+[RabbitMQ]: https://www.rabbitmq.com/
+[Redis]: https://redis.io
+[user guide]: https://dramatiq.io/guide.html
+
+
