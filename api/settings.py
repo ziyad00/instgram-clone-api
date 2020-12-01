@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 from copy import deepcopy
 
-from .dev_settings import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +28,7 @@ SECRET_KEY = '_ot#g!x#59u_rmk!f$uscj$(apl3b8v^&0dl4#54v^!y7u4lf7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -48,10 +47,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',  
     'djoser',
+    'rest_framework_simplejwt',
 
 
     # local
-   'account.apps.AccountConfig',
+    'account'
 ]
 
 MIDDLEWARE = [
@@ -60,7 +60,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'account.middleware.APITokenAuthMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -84,7 +83,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'api.wsgi.application'
+
+#AUTH_USER_MODEL = 'account.User'
 
 
 # Database
@@ -199,13 +199,7 @@ LOGGING = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
-AUTHENTICATION_BACKENDS = [
-    
-    'django.contrib.auth.backends.ModelBackend',
 
-    'allauth.account.auth_backends.AuthenticationBackend',
-    
-]
 
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
@@ -215,6 +209,7 @@ REST_FRAMEWORK = {
 
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
     'rest_framework.authentication.TokenAuthentication',
     'rest_framework.authentication.SessionAuthentication',
 ),
@@ -224,7 +219,16 @@ REST_FRAMEWORK = {
     
 }
 
-DJOSER = {
-    'LOGIN_FIELD': 'email',
-    'USER_CREATE_PASSWORD_RETYPE': True,
+#DJOSER = {
+    #'LOGIN_FIELD': 'email',
+  #  'SERIALIZERS': {
+   # 'user_create': 'account.serializers.UserCreateSerializer',
+    #'user': 'account.serializers.UserCreateSerializer',
+
+    #}
+#}
+
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
 }

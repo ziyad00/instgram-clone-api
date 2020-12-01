@@ -22,9 +22,13 @@ from django.conf import settings
 
 
 urlpatterns = [
-    path('auth/', include("account.urls")),
+    path('api/account/', include("account.urls")),
 #   url(r"^api/admin/", include("utils.urls")),
     path('api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
+       path('auth/', include('djoser.urls')),
+        path('auth/', include('djoser.urls.jwt')),
+
+
 
 ]

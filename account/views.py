@@ -10,16 +10,16 @@ from rest_framework.permissions import AllowAny
 #from actions.utils import create_action
 #from actions.models import Action
 from .models import Profile
-from django.contrib.auth.models import User
+from .permissions import IsOwnerProfileOrReadOnly
+from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework import permissions
-from .serializers import UserSerializer
-from rest_framework import generics
+from .serializers import UserSerializer,ProfileSerializer
+from rest_framework.generics import (ListCreateAPIView,RetrieveUpdateDestroyAPIView,)
 import os
 from datetime import timedelta
 from importlib import import_module
 from django.views.decorators.csrf import csrf_exempt
-import qrcode
 from django.conf import settings
 from django.contrib import auth
 from django.template.loader import render_to_string
@@ -29,9 +29,9 @@ from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from otpauth import OtpAuth
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.reverse import reverse
-from .models import Profile
-from .serializers import (UserProfileSerializer, EditUserProfileSerializer)
+#from .serializers import (UserProfileSerializer, EditUserProfileSerializer)
 #from .tasks import send_email_async
 
 
@@ -97,34 +97,43 @@ from .serializers import (UserProfileSerializer, EditUserProfileSerializer)
 
 
 
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
 
-
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    
-
-@api_view(['GET'])
-def api_root(request):
-    return Response({
-        'users': reverse('user-list', request=request),
-        'user_register_api': reverse('user_register_api', request=request)
-    })
+#@api_view(['GET'])
+#def api_root(request):
+ #   return Response({
+  #      'users': reverse('user-list', request=request),
+   #     'user_register_api': reverse('user_register_api', request=request)
+   # })
     
 
 class FollowView(viewsets.ViewSet):
-    queryset = Profile.objects
+    queryset = Profile.objects.all()
 
     def follow(self, request, pk):
-        own_profile = request.user.profile_set.first()  # or your queryset to get
+        #own_profile = request.user.profile.first() # or your queryset to get
         following_profile = Profile.objects.get(id=pk)
-        own_profile.following.add(following_profile)  # and .remove() for unfollow
+        request.user.profile.following.add(get_user_model().objects.get(id=pk))  # and .remove() for unfollow
         return Response({'message': 'now you are following'}, status=status.HTTP_200_OK)
     def unfollow(self, request, pk):
-        own_profile = request.user.profile_set.first()  # or your queryset to get
-        following_profile = Profile.objects.get(id=pk)
-        own_profile.following.remove(following_profile)  # and .remove() for unfollow
-        return Response({'message': 'now you are following'}, status=status.HTTP_200_OK)
+       # own_profile = request.user.profile_set.first()  # or your queryset to get
+        #following_profile = Profile.objects.get(id=pk)
+        request.user.profile.following.remove(get_user_model().objects.get(id=pk))  # and .remove() for unfollow
+        return Response({'message': 'now you are not following'}, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        user = self.request.user
+        return user.purchase_set.all()
+    
+class ProfileListCreateView(ListCreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class=ProfileSerializer
+    permission_classes=[IsAuthenticated]
+
+    def perform_create(self, serializer):
+        user=self.request.user
+        serializer.save(user=user)
+
+
+class ProfileDetailView(RetrieveUpdateDestroyAPIView):
+    queryset=uProfile.objects.all()
+    serializer_class=ProfileSerializer
+    permission_classes=[IsOwnerProfileOrReadOnly,IsAuthenticated]

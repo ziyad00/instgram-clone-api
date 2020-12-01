@@ -1,4 +1,0 @@
-user/
-user/id
-user/id/profile
-user/id/follow

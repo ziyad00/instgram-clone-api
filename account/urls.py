@@ -3,19 +3,16 @@ from django.contrib.auth import views as auth_views
 
 from .views import (
                         FollowView,
-                        UserList,UserDetail,
-                          api_root)
+                        UserList,UserDetail)
 
 from rest_framework import routers, serializers, viewsets
 from django.views.decorators.csrf import csrf_exempt
 
-
+app_name = 'account'
 urlpatterns = [
 
     #path('', api_root),
-    path('', include('djoser.urls')),
-    path('', include('djoser.urls.authtoken')),
-
+ 
    # path("profile/", UserProfileAPI.as_view(), name="user_profile_api"),
     #path("upload_avatar/", AvatarUploadAPI.as_view(), name="avatar_upload_api"),
 
