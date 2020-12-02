@@ -51,7 +51,8 @@ INSTALLED_APPS = [
 
 
     # local
-    'account'
+    'account',
+    'images.apps.ImagesConfig',
 ]
 
 MIDDLEWARE = [
@@ -215,18 +216,20 @@ REST_FRAMEWORK = {
 ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated', 
-    )
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100
     
 }
 
-#DJOSER = {
+DJOSER = {
     #'LOGIN_FIELD': 'email',
-  #  'SERIALIZERS': {
-   # 'user_create': 'account.serializers.UserCreateSerializer',
-    #'user': 'account.serializers.UserCreateSerializer',
+ #   'SERIALIZERS': {
+  #  'user_create': 'api.serializers.UserSerializer',
+   # 'user': 'api.serializers.UserSerializer'
 
     #}
-#}
+}
 
 
 SIMPLE_JWT = {

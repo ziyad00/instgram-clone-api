@@ -5,16 +5,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_POST
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 #from common.decorators import ajax_required
 #from actions.utils import create_action
 #from actions.models import Action
 from .models import Profile
-from .permissions import IsOwnerProfileOrReadOnly
+from .permissions import IsOwnerOrReadOnly
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets
-from rest_framework import permissions
-from .serializers import UserSerializer,ProfileSerializer
+from .serializers import ProfileSerializer
 from rest_framework.generics import (ListCreateAPIView,RetrieveUpdateDestroyAPIView,)
 import os
 from datetime import timedelta
@@ -31,67 +30,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.reverse import reverse
-#from .serializers import (UserProfileSerializer, EditUserProfileSerializer)
-#from .tasks import send_email_async
-
-
-
-#class UserProfileAPI(APIView):
-    #@method_decorator(ensure_csrf_cookie)
-    #def get(self, request, **kwargs):
-      
-        #user = request.user
-        #if not user.is_authenticated:
-         #   return self.success()
-        #show_real_name = False
-        #username = request.GET.get("username")
-        #try:
-            #if username:
-           #     user = User.objects.get(username=username)
-          #  else:
-         #       user = request.user
-        #        show_real_name = True
-       # except User.DoesNotExist:
-      #      return self.error("User does not exist")
-     #   return self.success(UserProfileSerializer(user.profile, show_real_name=show_real_name).data)
-
-    #@validate_serializer(EditUserProfileSerializer)
-   # @login_required
-  #  def put(self, request):
- #       data = request.data
- #       user_profile = request.user.Profile
-#        for k, v in data.items():
-#            setattr(user_profile, k, v)
-#        user_profile.save()
-#        return self.success(UserProfileSerializer(user_profile, show_real_name=True).data)
-
-
-#class AvatarUploadAPI(APIView):
-  #  request_parsers = ()
-
-   # @login_required
-    #def post(self, request):
-     #   form = ImageUploadForm(request.POST, request.FILES)
-      #  if form.is_valid():
-       #     avatar = form.cleaned_data["image"]
-        #else:
-         #   return self.error("Invalid file content")
-       # if avatar.size > 2 * 1024 * 1024:
-        #    return self.error("Picture is too large")
-       # suffix = os.path.splitext(avatar.name)[-1].lower()
-       # if suffix not in [".gif", ".jpg", ".jpeg", ".bmp", ".png"]:
-        #    return self.error("Unsupported file format")
-
-        #name = rand_str(10) + suffix
-        #with open(os.path.join(settings.AVATAR_UPLOAD_DIR, name), "wb") as img:
-         #   for chunk in avatar:
-          #      img.write(chunk)
-        #user_profile = request.user.userprofile
-
-        #user_profile.avatar = f"{settings.AVATAR_URI_PREFIX}/{name}"
-        #user_profile.save()
-        #return self.success("Succeeded")
-
 
 
 
@@ -134,6 +72,6 @@ class ProfileListCreateView(ListCreateAPIView):
 
 
 class ProfileDetailView(RetrieveUpdateDestroyAPIView):
-    queryset=uProfile.objects.all()
+    queryset=Profile.objects.all()
     serializer_class=ProfileSerializer
-    permission_classes=[IsOwnerProfileOrReadOnly,IsAuthenticated]
+    permission_classes=[IsOwnerOrReadOnly,IsAuthenticated]
