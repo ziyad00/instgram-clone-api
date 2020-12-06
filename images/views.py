@@ -16,7 +16,9 @@ from rest_framework.generics import (ListCreateAPIView,RetrieveUpdateDestroyAPIV
 from .serializers import *
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from account.permissions import IsOwnerOrReadOnly
+from rest_framework.parsers import JSONParser,MultiPartParser,FormParser
 
+from rest_framework import viewsets
 
 import redis
 from django.conf import settings
@@ -27,20 +29,52 @@ from django.conf import settings
    #             db=settings.REDIS_DB)
 
 
-class ImageListCreateView(ListCreateAPIView):
+class ImageViewSet(viewsets.ModelViewSet):
+    serializer_class = ImageSerializer
     queryset = Image.objects.all()
-    serializer_class= ImageSerializer
-    permission_classes=[IsAuthenticated]
+    parser_classes = (JSONParser, MultiPartParser, FormParser,)
 
+    
+    #def create(self, request):
+      #  user=self.request.user
+       # serializer_class.save(user=user)
+        
     def perform_create(self, serializer):
         user=self.request.user
-        serializer.save(user=user)
+        serializer.save(user=user)    
+        
+    def get_permissions(self):        
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action == 'create' or self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy':
+            permission_classes = [IsOwnerOrReadOnly,IsAuthenticated]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+    
+  #  def get_queryset(self):
+        """
+        This view should return a list of all the purchases
+        for the currently authenticated user.
+        """
+        #user = self.request.user
+        #return Image.objects.filter(user=user)
+    
+#class ImageListCreateView(ListCreateAPIView):
+    #queryset = Image.objects.all()
+    #serializer_class= ImageSerializer
+    #permission_classes=[IsAuthenticated]
+
+    #def perform_create(self, serializer):
+     #   user=self.request.user
+    #    serializer.save(user=user)
 
 
-class ImageDetailView(RetrieveUpdateDestroyAPIView):
-    queryset=Image.objects.all()
-    serializer_class=ImageSerializer
-    permission_classes=[IsOwnerOrReadOnly,IsAuthenticated]
+#class ImageDetailView(RetrieveUpdateDestroyAPIView):
+ #   queryset=Image.objects.all()
+  #  serializer_class=ImageSerializer
+   # permission_classes=[IsOwnerOrReadOnly,IsAuthenticated]
 
 
 

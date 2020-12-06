@@ -1,7 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
+from rest_framework.routers import DefaultRouter
 
 app_name = 'images'
+
+router = DefaultRouter()
+router.register(r'images', ImageViewSet)
 
 urlpatterns = [
    # path('create/', views.image_create, name='create'),
@@ -9,8 +13,8 @@ urlpatterns = [
    # path('like/', views.image_like, name='like'),
    # path('', views.image_list, name='list'),
     #path('ranking/', views.image_ranking, name='ranking'),
-    
-    path("images/",ImageListCreateView.as_view(),name="image-list"),
-    path("image/<int:pk>",ImageDetailView.as_view(),name="image"),
+    path('', include(router.urls))
+ #   path("images/",ImageListCreateView.as_view(),name="image-list"),
+  #  path("image/<int:pk>",ImageDetailView.as_view(),name="image"),
 
 ]

@@ -61,6 +61,7 @@ class FollowView(viewsets.ViewSet):
         user = self.request.user
         return user.purchase_set.all()
     
+ 
 class ProfileListCreateView(ListCreateAPIView):
     queryset = Profile.objects.all()
     serializer_class=ProfileSerializer
