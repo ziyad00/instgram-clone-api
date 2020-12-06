@@ -57,9 +57,7 @@ class FollowView(viewsets.ViewSet):
         #following_profile = Profile.objects.get(id=pk)
         request.user.profile.following.remove(get_user_model().objects.get(id=pk))  # and .remove() for unfollow
         return Response({'message': 'now you are not following'}, status=status.HTTP_200_OK)
-    def get_queryset(self):
-        user = self.request.user
-        return user.purchase_set.all()
+  
     
  
 class ProfileListCreateView(ListCreateAPIView):

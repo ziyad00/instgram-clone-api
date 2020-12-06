@@ -17,6 +17,8 @@ from .serializers import *
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from account.permissions import IsOwnerOrReadOnly
 from rest_framework.parsers import JSONParser,MultiPartParser,FormParser
+from rest_framework.response import Response
+from rest_framework import status
 
 from rest_framework import viewsets
 
@@ -35,9 +37,18 @@ class ImageViewSet(viewsets.ModelViewSet):
     parser_classes = (JSONParser, MultiPartParser, FormParser,)
 
     
-    #def create(self, request):
-      #  user=self.request.user
-       # serializer_class.save(user=user)
+    def like(self, request, pk):
+        try:
+            image = Image.objects.get(id=pk)
+            if action == 'like':
+                image.users_like.add(request.user)
+                create_action(request.user, 'likes', image)
+                Response({'message': 'now you like the image'}, status=status.HTTP_200_OK)
+            else:
+                image.users_like.remove(request.user)
+                return Response({'message': 'now you don\t like the image'}, status=status.HTTP_200_OK)
+        except:
+            return Response({'message': 'failuire'})
         
     def perform_create(self, serializer):
         user=self.request.user
@@ -53,32 +64,42 @@ class ImageViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
     
-  #  def get_queryset(self):
+    def get_queryset(self):
         """
         This view should return a list of all the purchases
         for the currently authenticated user.
         """
-        #user = self.request.user
-        #return Image.objects.filter(user=user)
+        queryset = Image.objects.all()
+        if self.action == 'list':
+            username = self.request.    query_params.get('username', None)
+            if username is not None:
+                queryset = queryset.filter(user=username)
+        return queryset
     
-#class ImageListCreateView(ListCreateAPIView):
-    #queryset = Image.objects.all()
-    #serializer_class= ImageSerializer
-    #permission_classes=[IsAuthenticated]
-
-    #def perform_create(self, serializer):
-     #   user=self.request.user
-    #    serializer.save(user=user)
 
 
-#class ImageDetailView(RetrieveUpdateDestroyAPIView):
- #   queryset=Image.objects.all()
-  #  serializer_class=ImageSerializer
-   # permission_classes=[IsOwnerOrReadOnly,IsAuthenticated]
+class LikeView(viewsets.ViewSet):
+    queryset = Image.objects.all()
 
+    def like(self, request, pk):
+        try:
+            image = Image.objects.get(id=pk)
+            image.users_like.add(request.user)
+            #create_action(request.user, 'likes', image)
+            Response({'message': 'now you like the image'}, status=status.HTTP_200_OK)
+ 
+    
+    def dislike(self, request, pk):
+        image = Image.objects.get(id=pk)
+        image.users_like.remove(request.user)
+        return Response({'message': 'now you don\t like the image'}, status=status.HTTP_200_OK)
 
-
-
+   
+    def get_queryset(self):
+        user = self.request.user
+        return user.purchase_set.all()
+    
+ 
 
 
 '''
