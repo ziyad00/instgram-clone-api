@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # local
     'account',
     'images.apps.ImagesConfig',
+    'actions',
 ]
 
 MIDDLEWARE = [
@@ -235,3 +236,7 @@ DJOSER = {
 SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
 }
+
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0

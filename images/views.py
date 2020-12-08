@@ -7,10 +7,8 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, \
                                   PageNotAnInteger
-#from common.decorators import ajax_required
-#from actions.utils import create_action
+from actions.utils import create_action
 
-#from .forms import ImageCreateForm
 from .models import *
 from rest_framework.generics import (ListCreateAPIView,RetrieveUpdateDestroyAPIView,)
 from .serializers import *
@@ -26,9 +24,9 @@ import redis
 from django.conf import settings
 
 # connect to redis
-#r = redis.Redis(host=settings.REDIS_HOST,
-  #              port=settings.REDIS_PORT,
-   #             db=settings.REDIS_DB)
+r = redis.Redis(host=settings.REDIS_HOST,
+                port=settings.REDIS_PORT,
+                 db=settings.REDIS_DB)
 
 
 class ImageViewSet(viewsets.ModelViewSet):
@@ -49,10 +47,12 @@ class ImageViewSet(viewsets.ModelViewSet):
                 return Response({'message': 'now you don\t like the image'}, status=status.HTTP_200_OK)
         except:
             return Response({'message': 'failuire'})
-        
     def perform_create(self, serializer):
         user=self.request.user
-        serializer.save(user=user)    
+        serializer =serializer.save(user=user)
+        create_action(self.request.user, 'post image', serializer)
+
+
         
     def get_permissions(self):        
         """
@@ -87,7 +87,8 @@ class LikeView(viewsets.ViewSet):
             image.users_like.add(request.user)
             #create_action(request.user, 'likes', image)
             Response({'message': 'now you like the image'}, status=status.HTTP_200_OK)
- 
+        except:
+            pass
     
     def dislike(self, request, pk):
         image = Image.objects.get(id=pk)

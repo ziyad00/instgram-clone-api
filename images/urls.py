@@ -13,7 +13,8 @@ urlpatterns = [
    # path('', views.image_list, name='list'),
     #path('ranking/', views.image_ranking, name='ranking'),
    path('', include(router.urls)),
-   path('like/<int:pk>/', LikeView.as_view({'post': 'like'})),
+   path('like/<int:pk>/', ImageViewSet.as_view({'post': 'like'})),
+   path('dislike/<int:pk>/', ImageViewSet.as_view({'post': 'dislike'})),
 
  #   path("images/",ImageListCreateView.as_view(),name="image-list"),
   #  path("image/<int:pk>",ImageDetailView.as_view(),name="image"),

@@ -1,19 +1,24 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
-from .views import FollowView, ProfileListCreateView,ProfileDetailView
 
 from rest_framework import routers, serializers, viewsets
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.routers import DefaultRouter
+from .views import *
 
 app_name = 'account'
+
+router = DefaultRouter()
+router.register(r'profiles', ProfileViewSet)
 urlpatterns = [
 
-    #path('', api_root),
+   path('', include(router.urls)),
 
     path('follow/<int:pk>/', FollowView.as_view({'post': 'follow'})),
     path('unfollow/<int:pk>/', FollowView.as_view({'post': 'unfollow'})),
-    path("profiles/",ProfileListCreateView.as_view(),name="all-profiles"),
-    path("profile/<int:pk>",ProfileDetailView.as_view(),name="profile"),
+    path('timeline/', ActionDetail.as_view()),
+
+  
 
 ]
