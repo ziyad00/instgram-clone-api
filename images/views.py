@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, \
                                   PageNotAnInteger
 from actions.utils import create_action
+from rest_framework import generics
 
 from .models import *
 from rest_framework.generics import (ListCreateAPIView,RetrieveUpdateDestroyAPIView,)
@@ -17,8 +18,11 @@ from account.permissions import IsOwnerOrReadOnly
 from rest_framework.parsers import JSONParser,MultiPartParser,FormParser
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from rest_framework import viewsets
+from rest_framework import mixins
+from rest_framework.views import APIView
 
 import redis
 from django.conf import settings
@@ -34,24 +38,23 @@ class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     parser_classes = (JSONParser, MultiPartParser, FormParser,)
 
-    
-    def like(self, request, pk):
-        try:
-            image = Image.objects.get(id=pk)
-            if action == 'like':
-                image.users_like.add(request.user)
-                create_action(request.user, 'likes', image)
-                Response({'message': 'now you like the image'}, status=status.HTTP_200_OK)
-            else:
-                image.users_like.remove(request.user)
-                return Response({'message': 'now you don\t like the image'}, status=status.HTTP_200_OK)
-        except:
-            return Response({'message': 'failuire'})
+    def retrieve(self, request, pk=None):
+        queryset = Image.objects.all()
+        image = get_object_or_404(queryset, pk=pk)
+        serializer = ImageSerializer(image)
+        total_views = r.incr(f'image:{image.id}:views')
+        r.zincrby('image_ranking', 1, image.id)
+        return Response(serializer.data)
+        
     def perform_create(self, serializer):
         user=self.request.user
         serializer =serializer.save(user=user)
         create_action(self.request.user, 'post image', serializer)
 
+    
+    #def retrieve(self, request, pk=None):
+     #   image = self.get_object()
+      #  total_views = r.incr(f'image:{image.id}:views')
 
         
     def get_permissions(self):        
@@ -71,10 +74,17 @@ class ImageViewSet(viewsets.ModelViewSet):
         """
         queryset = Image.objects.all()
         if self.action == 'list':
-            username = self.request.    query_params.get('username', None)
+            username = self.request.query_params.get('username', None)
             if username is not None:
-                queryset = queryset.filter(user=username)
+                userID = User.objects.get(username=username)
+                queryset = queryset.filter(user=userID)
+        elif self.action == 'detail':
+            total_views = r.incr(f'image:{image.id}:views')
+            r.zincrby('image_ranking', 1, image.id)
+
+
         return queryset
+
     
 
 
@@ -85,7 +95,6 @@ class LikeView(viewsets.ViewSet):
         try:
             image = Image.objects.get(id=pk)
             image.users_like.add(request.user)
-            #create_action(request.user, 'likes', image)
             Response({'message': 'now you like the image'}, status=status.HTTP_200_OK)
         except:
             pass
@@ -102,7 +111,24 @@ class LikeView(viewsets.ViewSet):
     
  
 
+    
+class ExplorerView(APIView):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
 
+    def get(self, request, *args, **kwargs):
+        
+           # get image ranking dictionary
+        image_ranking = r.zrange('image_ranking', 0, -1, desc=True)[:10]
+        image_ranking_ids = [int(id) for id in image_ranking]
+        # get most viewed images
+        most_viewed = list(Image.objects.filter(
+                           id__in=image_ranking_ids))
+        most_viewed.sort(key=lambda x: image_ranking_ids.index(x.id))
+        x = ImageSerializer(most_viewed, many=True)
+        return Response(x.data, status=status.HTTP_200_OK)
+
+    
 '''
 
 
