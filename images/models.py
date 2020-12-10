@@ -19,8 +19,25 @@ class Image(models.Model):
                                               default=0)
 
     def __str__(self):
-        return self.title
-
+        return str(self.id)
+    
     
 
 
+
+class Comment(models.Model):
+    image = models.ForeignKey(Image,
+                             on_delete=models.CASCADE,
+                             related_name='comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name='comments_created',
+                             on_delete=models.CASCADE)
+
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('created',)
+
+    def __str__(self):
+        return self.body

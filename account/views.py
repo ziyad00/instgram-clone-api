@@ -100,4 +100,19 @@ class ActionDetail(mixins.RetrieveModelMixin,
 
     
 
- 
+   
+class followersView(APIView):
+    queryset = Image.objects.all()
+    serializer_class = ImageSerializer
+
+    def get(self, request, *args, **kwargs):
+        
+           # get image ranking dictionary
+        image_ranking = r.zrange('image_ranking', 0, -1, desc=True)
+        image_ranking_ids = [int(id) for id in image_ranking]
+        # get most viewed images
+        most_viewed = list(Image.objects.filter(
+                           id__in=image_ranking_ids))
+        most_viewed.sort(key=lambda x: image_ranking_ids.index(x.id))
+        x = ImageSerializer(most_viewed, many=True)
+        return Response(x.data, status=status.HTTP_200_OK)

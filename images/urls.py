@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'images', ImageViewSet)
+router.register(r'comments', CommentViewSet)
 
 urlpatterns = [
    # path('create/', views.image_create, name='create'),
