@@ -35,7 +35,9 @@ from django.http import JsonResponse
 from rest_framework import mixins
 from rest_framework import generics
 
-
+from rest_framework.views import APIView
+from images.models import Image
+from images.serializers import ImageSerializer
 
 
 
@@ -95,7 +97,6 @@ class ActionDetail(mixins.RetrieveModelMixin,
         actions = actions.select_related('user', 'user__profile')\
                         .prefetch_related('target')[:10]
         x = ActionSerializer(actions, many=True)
-        print(x)
         return Response(x.data, status=status.HTTP_200_OK)
 
     
