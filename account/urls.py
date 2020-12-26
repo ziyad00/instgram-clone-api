@@ -11,6 +11,7 @@ app_name = 'account'
 
 router = DefaultRouter()
 router.register(r'profiles', ProfileViewSet)
+
 urlpatterns = [
 
    path('', include(router.urls)),

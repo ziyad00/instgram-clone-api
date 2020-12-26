@@ -103,10 +103,7 @@ class LikeView(viewsets.ViewSet):
         return Response({'message': 'now you don\t like the image'}, status=status.HTTP_200_OK)
 
    
-    def get_queryset(self):
-        user = self.request.user
-        return user.purchase_set.all()
-    
+
  
 
     
