@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 from copy import deepcopy
+import django_heroku
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,11 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
+#SECRET_KEY = '_ot#g!x#59u_rmk!f$uscj$(apl3b8v^&0dl4#54v^!y7u4lf7'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -93,16 +92,6 @@ TEMPLATES = [
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'instgram', 
-        'USER': 'postgres', 
-        'PASSWORD': '1234',
-        'HOST': '127.0.0.1', 
-        'PORT': '5432',
-    }
-}
 
 
 # Password validation
@@ -141,7 +130,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/public/'
+STATIC_URL = '/static/'
 
 
 MEDIA_URL = '/media/'
@@ -153,7 +142,7 @@ AVATAR_URI_PREFIX = "/public/avatar"
 AVATAR_UPLOAD_DIR = f"{DATA_DIR}{AVATAR_URI_PREFIX}"
 
 
-STATICFILES_DIRS = [os.path.join(DATA_DIR, "public")]
+STATICFILES_DIRS = [os.path.join(DATA_DIR, "static")]
 SITE_ID = 1
 
 LOGGING_HANDLERS = ['console']
@@ -204,7 +193,6 @@ LOGGING = {
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
 
 
@@ -242,6 +230,59 @@ SIMPLE_JWT = {
    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
-REDIS_HOST = 'localhost'
-REDIS_PORT = 6379
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
+
+PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
+STATIC_ROOT  =   os.path.join(PROJECT_ROOT, 'staticfiles')
+
+
+from .base import *
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ['instgram01.herokuapp.com']
+
+
+DATABASES = {
+     'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'd49g8oerua4a2b', 
+        'USER': 'dyuxqpgeopzqui', 
+        'PASSWORD': '599e3f6aab7ba1b75918d6f92e7528d5e377d86eb37f0fe867b7cf724dc375e1',
+        'HOST': 'ec2-54-208-233-243.compute-1.amazonaws.com', 
+        'PORT': '5432',
+    }
+}
+
+#MIDDLEWARE = [
+ #   'whitenoise.middleware.WhiteNoiseMiddleware',
+  #  'django.middleware.security.SecurityMiddleware',
+   # 'django.contrib.sessions.middleware.SessionMiddleware',
+    #'django.middleware.common.CommonMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #'django.contrib.messages.middleware.MessageMiddleware',
+    #'django.middleware.clickjacking.XFrameOptionsMiddleware',
+#]
+
+#STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+
+
+
+
+
+REDIS_HOST = 'ec2-3-94-248-0.compute-1.amazonaws.com'
+REDIS_PORT = 23739
 REDIS_DB = 0
+REDIS_PASSWORD = 'pe5b6ce28890a35a4136b0d640ae7323cbd66bff3a3013e957c3aa781b0a041c7'
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.mailgun.org'
+#EMAIL_PORT = 587
+#EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+#EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+#EMAIL_USE_TLS = True
