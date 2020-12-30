@@ -32,12 +32,7 @@ DATABASES = {
 
 
 
-CACHES = {
-    "default": {
-         "BACKEND": "redis_cache.RedisCache",
-         "LOCATION": os.environ.get('REDIS_URL'),
-    }
-}
+
 
 
 REDIS_HOST = 'ec2-3-94-248-0.compute-1.amazonaws.com'
