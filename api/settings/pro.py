@@ -5,6 +5,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['instgram01.herokuapp.com']
 
+
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
