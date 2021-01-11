@@ -22,7 +22,7 @@ django-rest-auth==0.9.5
 django-rest-framework==0.1.0
 django-templated-mail==1.1.1
 djangorestframework==3.12.2
-djangorestframework-simplejwt==4.6.0
+djangorestframework-simplejwt==4.4.0
 djoser==2.1.0
 dramatiq==1.9.0
 drf-yasg==1.20.0
