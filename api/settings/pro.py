@@ -36,9 +36,9 @@ DATABASES = {
 INSTALLED_APPS.append("cloudinary") 
 
 cloudinary.config(
-  cloud_name = os.environ.get('CLOUD_NAME'),
-  api_key = os.environ.get('API_KEY'),
-  api_secret = os.environ.get('API_SECRET'),
+  cloud_name = 'dguqb65cz',
+  api_key = '395427629946288',
+  api_secret = 'WgxIuJosY4hsfNiSTPkallo3dPo',
   secure = True
 )
 
