@@ -41,6 +41,11 @@ cloudinary.config(
   api_secret = 'WgxIuJosY4hsfNiSTPkallo3dPo',
   secure = True
 )
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dguqb65cz',
+    'API_KEY': '395427629946288',
+    'API_SECRET': 'WgxIuJosY4hsfNiSTPkallo3dPo'
+}
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 REDIS_HOST = 'ec2-3-94-248-0.compute-1.amazonaws.com'
