@@ -1,4 +1,5 @@
 from .base import *
+import cloudinary
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,8 +33,14 @@ DATABASES = {
 
 
 
+INSTALLED_APPS.append("cloudinary") 
 
-
+cloudinary.config(
+  cloud_name = os.environ.get('CLOUD_NAME'),
+  api_key = os.environ.get('API_KEY'),
+  api_secret = os.environ.get('API_SECRET'),
+  secure = True
+)
 
 REDIS_HOST = 'ec2-3-94-248-0.compute-1.amazonaws.com'
 REDIS_PORT = 23739
