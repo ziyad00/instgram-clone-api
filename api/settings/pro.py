@@ -42,6 +42,7 @@ cloudinary.config(
   secure = True
 )
 
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 REDIS_HOST = 'ec2-3-94-248-0.compute-1.amazonaws.com'
 REDIS_PORT = 23739
 REDIS_DB = 0
