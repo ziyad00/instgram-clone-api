@@ -62,7 +62,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
 
     
- 
+    
     def perform_create(self, serializer):
         user=self.request.user
         serializer =serializer.save(user=user)
